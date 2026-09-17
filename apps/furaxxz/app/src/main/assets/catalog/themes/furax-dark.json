@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "name": "Furax Dark",
+  "version": "0.1.0",
+  "colors": {
+    "primary": "#7C4DFF",
+    "background": "#0E0E12"
+  }
+}

@@ -37,8 +37,13 @@ schema (JSON manifests for themes/packs, sfnt fonts, image assets):
 | `engine/CatalogRepository` | Merges sources |
 | `engine/FontManager` | Loads/validates a font as a real `Typeface`, applies it to in-app views |
 | `engine/WallpaperManager` | Preview, local cache, and actually setting the device wallpaper via `android.app.WallpaperManager` |
-| `engine/PersonalizationEngine` | Orchestrator wiring the above; managers not yet implemented (Theme/Icon/Sound/Animation/Pack) are absent, not stubbed |
-| `ui/` | `MainActivity` (category grid) → `CategoryActivity` (catalog list) |
+| `engine/json/JsonValue` + `JsonParser` | A small, dependency-free recursive-descent JSON parser. Exists because `org.json` (Android's bundled JSON lib) throws `RuntimeException("not mocked")` in local JVM unit tests — verified empirically — and pulling in Robolectric just to parse a flat theme/pack manifest isn't worth a new dependency. Fully unit-tested (`JsonParserTest`) |
+| `engine/theme/ThemeManifest` + `ThemeManifestParser` | Theme schema mirroring the CLI's `theme.py` exactly; pure Kotlin, unit-tested (`ThemeManifestParserTest`) |
+| `engine/theme/ThemeManager` | Loads a theme from `assets/catalog/themes/`, applies `colors` (recolors the views it's given — never anything outside the app), `wallpaper`/`font` (delegates to the managers above); reports `icons`/`sounds`/`animations` as explicitly skipped (PLANNED), never as applied |
+| `engine/pack/PackManifest` + `PackManifestParser` | Pack schema mirroring `pack.py`; pure Kotlin, unit-tested (`PackManifestParserTest`) |
+| `engine/pack/PackManager` | Loads a pack from `assets/catalog/packs/`, applies `font`/`wallpaper`/`colors` by delegating to `ThemeManager` (no duplicated logic); reports `icons`/`sounds`/`bootAnimation` as explicitly skipped |
+| `engine/PersonalizationEngine` | Orchestrator wiring `catalog`, `fonts`, `wallpapers`, `themes`, `packs`; Icon/Sound/Animation managers remain absent, not stubbed |
+| `ui/` | `MainActivity` (category grid) → `CategoryActivity` (catalog list; tapping a Theme/Pack item shows a confirmation dialog, then applies it and reports exactly what was applied vs. skipped) |
 
 ## Why not one shared engine yet
 

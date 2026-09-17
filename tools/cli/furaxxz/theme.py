@@ -8,12 +8,15 @@ device.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 THEME_SCHEMA_VERSION = 1
 
 REQUIRED_FIELDS = {"name", "version", "colors"}
 OPTIONAL_FIELDS = {"wallpaper", "icons", "font", "sounds", "animations", "author", "description"}
+
+HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 
 
 class ThemeError(ValueError):
@@ -51,7 +54,7 @@ def validate_theme(manifest: dict) -> None:
     if not isinstance(manifest["colors"], dict) or not manifest["colors"]:
         raise ThemeError("Theme 'colors' must be a non-empty object")
     for key, value in manifest["colors"].items():
-        if not isinstance(value, str) or not value.startswith("#"):
+        if not isinstance(value, str) or not HEX_COLOR.match(value):
             raise ThemeError(f"Color '{key}' must be a hex string like '#RRGGBB', got {value!r}")
 
 

@@ -35,7 +35,11 @@ directory per category under both `catalog/` (CLI-facing) and
 
 Validated by `tools/cli/furaxxz/theme.py::validate_theme`: `name`,
 `version`, `colors` required; every color value must be a `#RRGGBB`-style
-hex string.
+hex string. The Android app validates the identical rules independently
+in `engine/theme/ThemeManifestParser.kt` (see `docs/ARCHITECTURE.md` for
+why it doesn't just reuse `org.json`) — a `theme.json` produced by
+`furaxxz theme create` is loadable, unmodified, from
+`assets/catalog/themes/<file>.json` in the app.
 
 ### Pack (`catalog/packs/<name>/pack.json`)
 
@@ -48,13 +52,26 @@ hex string.
 }
 ```
 
-At least one component is required (`pack.py::validate_pack`).
+At least one component is required (`pack.py::validate_pack`, mirrored by
+`engine/pack/PackManifestParser.kt` on Android).
 
 ### Font entry (Android manifest, `assets/catalog/fonts/manifest.json`)
 
 ```json
 [{ "id": "inter-regular", "name": "Inter", "author": "Google Fonts", "license": "OFL-1.1", "file": "Inter-Regular.ttf" }]
 ```
+
+### Theme/Pack entry (Android manifest, `assets/catalog/themes|packs/manifest.json`)
+
+Same `{id, name, author, license, file}` shape as fonts; `file` points to
+the full `theme.json`/`pack.json` document alongside it in
+`assets/catalog/themes/` or `assets/catalog/packs/`. Two demo entries
+ship in v0.1 — `furax-dark` (theme) and `furax-essentials` (pack) — using
+only hand-picked hex colors already defined in `res/values/colors.xml`
+(no third-party asset, so no licensing question). Tapping one in the app
+shows what it declares, then what was actually applied vs. skipped
+(`icons`/`sounds`/`animations` are always skipped — PLANNED, see
+`docs/MODIFICATIONS.md`).
 
 ## Licensing
 

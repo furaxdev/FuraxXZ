@@ -16,6 +16,8 @@ the existing Sony firmware rather than a full AOSP/LineageOS rebuild.
 |---|---|
 | `furaxxz` CLI — doctor, device profile, firmware analyze/extract, fonts inspect/validate/inject, theme/pack create, backup create/restore, security inspect, validate, clean | **IMPLEMENTED** |
 | Android app (`apps/furaxxz/`) — category browser, local offline catalog, font preview, wallpaper setting | **IMPLEMENTED** (builds and passes unit tests — see `docs/ENVIRONMENT.md`) |
+| Android theme/pack: manifest parsing+validation, apply colors/wallpaper/font | **IMPLEMENTED** (see `docs/MODIFICATIONS.md`) |
+| Android theme/pack: icons/sounds/animations/bootAnimation | **PLANNED** — always reported as skipped, never applied |
 | Firmware analysis (ZIP/TAR/sparse/ext4/boot.img detection) | **IMPLEMENTED** |
 | Font engine (sfnt parsing/validation/metadata) | **IMPLEMENTED** |
 | Sony SIN/FTF proprietary format support | **PLANNED** |
@@ -86,12 +88,14 @@ docs/               Architecture, firmware, bootloader, flashing, security, cata
 ## Testing
 
 ```bash
-python3 -m pytest -v          # CLI: 49 tests — fonts, firmware, hashing, backup, theme/pack, CLI, security
-cd apps/furaxxz && ./gradlew testDebugUnitTest   # Android JVM unit tests
+python3 -m pytest -v          # CLI: 50 tests — fonts, firmware, hashing, backup, theme/pack, CLI, security
+cd apps/furaxxz && ./gradlew testDebugUnitTest   # Android: 34 JVM unit tests — model, JSON parser, theme/pack manifests
 ```
 
 No test modifies a real firmware image or touches a real device; all
-firmware/backup tests operate on synthetic fixtures in `tmp_path`.
+firmware/backup tests operate on synthetic fixtures in `tmp_path`, and the
+Android theme/pack unit tests are pure-Kotlin manifest parsing (no
+Android framework, no emulator/device required).
 
 ## License
 

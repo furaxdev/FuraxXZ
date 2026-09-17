@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.furax.furaxxz.databinding.ItemCatalogEntryBinding
 import com.furax.furaxxz.model.CatalogItem
 
-class CatalogItemAdapter(private val items: List<CatalogItem>) :
-    RecyclerView.Adapter<CatalogItemAdapter.ViewHolder>() {
+class CatalogItemAdapter(
+    private val items: List<CatalogItem>,
+    private val onClick: (CatalogItem) -> Unit = {},
+) : RecyclerView.Adapter<CatalogItemAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemCatalogEntryBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -22,6 +24,7 @@ class CatalogItemAdapter(private val items: List<CatalogItem>) :
         val authorPart = item.author?.let { " · $it" } ?: ""
         holder.binding.itemStatus.text =
             (if (item.installed) "Installed" else "Not installed") + authorPart
+        holder.binding.root.setOnClickListener { onClick(item) }
     }
 
     override fun getItemCount(): Int = items.size

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "name": "Furax Essentials",
+  "version": "0.1.0",
+  "components": {
+    "colors": {
+      "primary": "#00E5C7",
+      "background": "#0E0E12"
+    },
+    "icons": "furax-icon-pack"
+  }
+}

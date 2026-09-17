@@ -20,6 +20,19 @@ def test_theme_rejects_non_hex_color(tmp_path):
         theme_mod.create_theme(tmp_path, "bad", {"primary": "purple"})
 
 
+def test_theme_rejects_short_hex_shorthand(tmp_path):
+    # Only full #RRGGBB is accepted — must match the Android-side
+    # ThemeManifestParser regex exactly, or a theme created on the CLI
+    # could fail to load in the app. See docs/ARCHITECTURE.md.
+    with pytest.raises(theme_mod.ThemeError):
+        theme_mod.create_theme(tmp_path, "bad", {"primary": "#111"})
+
+
+def test_theme_rejects_hex_missing_hash(tmp_path):
+    with pytest.raises(theme_mod.ThemeError):
+        theme_mod.create_theme(tmp_path, "bad", {"primary": "7C4DFF"})
+
+
 def test_theme_rejects_unknown_field(tmp_path):
     with pytest.raises(theme_mod.ThemeError):
         theme_mod.create_theme(tmp_path, "bad", {"primary": "#FFFFFF"}, notAField="x")

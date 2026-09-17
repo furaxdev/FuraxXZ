@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": "furax-essentials",
+    "name": "Furax Essentials",
+    "author": "FuraxXZ",
+    "license": "MIT",
+    "file": "furax-essentials.json"
+  }
+]

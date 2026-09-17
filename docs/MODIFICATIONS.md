@@ -15,9 +15,14 @@ presented as more finished than this table says.
 | Android: catalog browsing (local, offline) | **IMPLEMENTED** | `apps/furaxxz` `engine/CatalogRepository` |
 | Android: in-app font application (sandboxed) | **IMPLEMENTED** | `apps/furaxxz` `engine/FontManager` |
 | Android: setting device wallpaper | **IMPLEMENTED** | `apps/furaxxz` `engine/WallpaperManager` |
+| Android: theme manifest parsing/validation (pure Kotlin, no `org.json`) | **IMPLEMENTED** | `apps/furaxxz` `engine/theme/ThemeManifestParser`, tested in `ThemeManifestParserTest` |
+| Android: pack manifest parsing/validation (pure Kotlin) | **IMPLEMENTED** | `apps/furaxxz` `engine/pack/PackManifestParser`, tested in `PackManifestParserTest` |
+| Android: theme apply — `colors` (in-app view recolor only), `wallpaper`, `font` | **IMPLEMENTED** | `apps/furaxxz` `engine/theme/ThemeManager::apply` |
+| Android: pack apply — `font`/`wallpaper`/`colors` (delegates to `ThemeManager`) | **IMPLEMENTED** | `apps/furaxxz` `engine/pack/PackManager::apply` |
+| Android: theme/pack `icons`/`sounds`/`animations`/`bootAnimation` components | **PLANNED** | Never applied and never reported as applied — `ThemeManager`/`PackManager` list them in `skipped`/`skippedComponents` with an explicit reason on every `apply()` call |
 | Sony SIN/FTF proprietary format parsing | **PLANNED** | not started — see `docs/FIRMWARE.md` |
 | Font injection into a real partition image (repack) | **BLOCKED** | `furaxxz fonts inject --execute` explicitly stops and reports BLOCKED — see `docs/FLASHING.md` |
-| Theme/Icon/Sound/Animation/Pack *managers* on Android (system-level apply) | **PLANNED** | Not present in `PersonalizationEngine` — intentionally absent rather than stubbed, per project quality rules |
+| Android: system-wide theme/icon/sound application (touching `/system` or launcher-level theming) | **PLANNED/UNSUPPORTED** | Out of reach without root on a locked-bootloader F8331; FuraxXZ only ever recolors its own in-app views — see `docs/BOOTLOADER.md` |
 | Bootloader unlock, any form | **UNSUPPORTED** | Will never be implemented — see `docs/BOOTLOADER.md` |
 | Remote/hosted catalog | **PLANNED** | `RemoteCatalogSource` is a documented no-op placeholder |
 
