@@ -111,3 +111,81 @@ def test_cli_version():
     result = run_cli("--version")
     assert result.returncode == 0
     assert "furaxxz" in result.stdout
+
+
+def test_cli_lab_full_pipeline(tmp_path):
+    import shutil
+
+    session = "cli-pipeline-test"
+    lab_dir = REPO_ROOT / "lab"
+    session_dirs = [
+        lab_dir / "original" / session,
+        lab_dir / "modified" / session,
+        lab_dir / "rebuilt" / session,
+        lab_dir / "reports" / session,
+    ]
+    for d in session_dirs:
+        shutil.rmtree(d, ignore_errors=True)
+
+    try:
+        source = tmp_path / "source" / "system" / "fonts"
+        source.mkdir(parents=True)
+        (source / "Roboto.ttf").write_bytes(b"original-bytes")
+        new_font = tmp_path / "new-font.ttf"
+        new_font.write_bytes(b"new-bytes")
+
+        result = run_cli("lab", "init", str(tmp_path / "source"), "--session", session)
+        assert result.returncode == 0, result.stderr
+
+        result = run_cli(
+            "lab", "apply", session,
+            "--replace", "system/fonts/Roboto.ttf", str(new_font),
+        )
+        assert result.returncode == 0, result.stderr
+        assert "Applied replace" in result.stdout
+
+        result = run_cli("lab", "verify", session)
+        assert result.returncode == 0, result.stderr
+        assert "VERIFY PASSED" in result.stdout
+
+        result = run_cli("lab", "build", session)
+        assert result.returncode == 0, result.stderr
+        report = json.loads(result.stdout.split("\n\n", 1)[1])
+        assert report["flashable"] is False
+        assert report["status"] == "EXPERIMENTAL"
+    finally:
+        for d in session_dirs:
+            shutil.rmtree(d, ignore_errors=True)
+
+
+def test_cli_lab_apply_rejects_path_traversal(tmp_path):
+    import shutil
+
+    session = "cli-traversal-test"
+    lab_dir = REPO_ROOT / "lab"
+    session_dirs = [lab_dir / "original" / session, lab_dir / "modified" / session]
+    for d in session_dirs:
+        shutil.rmtree(d, ignore_errors=True)
+
+    try:
+        source = tmp_path / "source"
+        source.mkdir()
+        (source / "a.txt").write_text("a")
+        evil = tmp_path / "evil.txt"
+        evil.write_text("evil")
+
+        result = run_cli("lab", "init", str(source), "--session", session)
+        assert result.returncode == 0, result.stderr
+
+        result = run_cli("lab", "apply", session, "--add", "../../etc/evil.txt", str(evil))
+        assert result.returncode == 1
+        assert "error" in result.stderr.lower()
+    finally:
+        for d in session_dirs:
+            shutil.rmtree(d, ignore_errors=True)
+
+
+def test_cli_lab_verify_missing_session():
+    result = run_cli("lab", "verify", "no-such-session-at-all")
+    assert result.returncode == 1
+    assert "error" in result.stderr.lower()

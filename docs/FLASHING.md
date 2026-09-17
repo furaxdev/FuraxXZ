@@ -36,3 +36,24 @@ is not safe to automate. See `docs/SECURITY.md`.
 
 Nothing produced by this repository should ever be flashed to a real
 device without independent verification outside this tool.
+
+## The Phase 8 offline lab (`furaxxz lab ...`)
+
+`lab init` / `lab apply` / `lab build` / `lab verify` (see
+`docs/MODIFICATIONS.md` and `tools/cli/furaxxz/lab.py`) let you
+experiment with file-level changes to an already-extracted directory
+tree — replace/add/remove a file, then rebuild. This is a different,
+more honest workflow than `fonts inject`'s partition-image path:
+
+- It never touches a raw partition image (`.img`) — only a directory
+  tree, e.g. one produced by `furaxxz firmware extract`.
+- `lab build`'s output is a plain ZIP archive, not a partition image.
+  Its `report.json` hardcodes `"flashable": false` and
+  `"status": "EXPERIMENTAL"` — there is no code path that changes this.
+- It exists to make modifications **reproducible and auditable**
+  (every change is a recorded operation, replayable and hash-verified
+  by `lab verify`), not to produce something flashable.
+
+If real partition repacking is ever implemented, it would consume a
+`lab build` output as input — it does not exist yet (see
+`docs/MODIFICATIONS.md`: still `BLOCKED`).

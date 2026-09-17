@@ -14,7 +14,8 @@ the existing Sony firmware rather than a full AOSP/LineageOS rebuild.
 
 | Component | Status |
 |---|---|
-| `furaxxz` CLI — doctor, device profile, firmware analyze/extract, fonts inspect/validate/inject, theme/pack create, backup create/restore, security inspect, validate, clean | **IMPLEMENTED** |
+| `furaxxz` CLI — doctor, device profile, firmware analyze/extract, fonts inspect/validate/inject, theme/pack create, backup create/restore, security inspect, offline lab (init/apply/build/verify), validate, clean | **IMPLEMENTED** |
+| Offline system modification lab (`furaxxz lab ...`) | **IMPLEMENTED** — reproducible, hash-verified, output never flashable (see `docs/MODIFICATIONS.md`) |
 | Android app (`apps/furaxxz/`) — category browser, local offline catalog, font preview, wallpaper setting | **IMPLEMENTED** (builds and passes unit tests — see `docs/ENVIRONMENT.md`) |
 | Android theme/pack: manifest parsing+validation, apply colors/wallpaper/font | **IMPLEMENTED** (see `docs/MODIFICATIONS.md`) |
 | Android theme/pack: icons/sounds/animations/bootAnimation | **PLANNED** — always reported as skipped, never applied |
@@ -36,6 +37,12 @@ python3 -m pip install pytest   # for running tests; the CLI itself needs no dep
 ./scripts/furaxxz firmware analyze path/to/image.zip
 ./scripts/furaxxz fonts validate path/to/font.ttf
 ./scripts/furaxxz security inspect
+
+# Offline modification lab — never touches a real device, never flashable
+./scripts/furaxxz lab init path/to/extracted_tree --session demo
+./scripts/furaxxz lab apply demo --replace system/fonts/Roboto.ttf path/to/new-font.ttf
+./scripts/furaxxz lab verify demo
+./scripts/furaxxz lab build demo
 ```
 
 Or install it properly:
@@ -88,7 +95,7 @@ docs/               Architecture, firmware, bootloader, flashing, security, cata
 ## Testing
 
 ```bash
-python3 -m pytest -v          # CLI: 50 tests — fonts, firmware, hashing, backup, theme/pack, CLI, security
+python3 -m pytest -v          # CLI: 74 tests — fonts, firmware, hashing, backup, theme/pack, lab, CLI, security
 cd apps/furaxxz && ./gradlew testDebugUnitTest   # Android: 34 JVM unit tests — model, JSON parser, theme/pack manifests
 ```
 

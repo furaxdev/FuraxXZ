@@ -20,8 +20,12 @@ presented as more finished than this table says.
 | Android: theme apply — `colors` (in-app view recolor only), `wallpaper`, `font` | **IMPLEMENTED** | `apps/furaxxz` `engine/theme/ThemeManager::apply` |
 | Android: pack apply — `font`/`wallpaper`/`colors` (delegates to `ThemeManager`) | **IMPLEMENTED** | `apps/furaxxz` `engine/pack/PackManager::apply` |
 | Android: theme/pack `icons`/`sounds`/`animations`/`bootAnimation` components | **PLANNED** | Never applied and never reported as applied — `ThemeManager`/`PackManager` list them in `skipped`/`skippedComponents` with an explicit reason on every `apply()` call |
+| Offline lab: session snapshot + hashed original (`lab init`) | **IMPLEMENTED** | `tools/cli/furaxxz/lab.py::init_session`, tested in `tests/test_lab.py` |
+| Offline lab: recorded file operations (`lab apply --replace/--add/--remove`) | **IMPLEMENTED** | `lab.py::apply_operation`; rejects path traversal, refuses to overwrite/create-over-existing incorrectly |
+| Offline lab: reproducibility + tamper detection (`lab verify`) | **IMPLEMENTED** | `lab.py::verify_session` — replays `operations.json` onto a *fresh* copy of the original and diffs it against the working tree; independently re-hashes the original against its init-time checksums |
+| Offline lab: packaging (`lab build`) | **IMPLEMENTED — output explicitly EXPERIMENTAL, never flashable** | `lab.py::build_session` writes a plain ZIP + `report.json` with `"flashable": false` hardcoded — it is not a partition image and not signed |
 | Sony SIN/FTF proprietary format parsing | **PLANNED** | not started — see `docs/FIRMWARE.md` |
-| Font injection into a real partition image (repack) | **BLOCKED** | `furaxxz fonts inject --execute` explicitly stops and reports BLOCKED — see `docs/FLASHING.md` |
+| Font injection into a real partition image (repack) | **BLOCKED** | `furaxxz fonts inject --execute` explicitly stops and reports BLOCKED — see `docs/FLASHING.md`. The Phase 8 lab does not change this: it operates on already-extracted directory trees, never on a raw partition image |
 | Android: system-wide theme/icon/sound application (touching `/system` or launcher-level theming) | **PLANNED/UNSUPPORTED** | Out of reach without root on a locked-bootloader F8331; FuraxXZ only ever recolors its own in-app views — see `docs/BOOTLOADER.md` |
 | Bootloader unlock, any form | **UNSUPPORTED** | Will never be implemented — see `docs/BOOTLOADER.md` |
 | Remote/hosted catalog | **PLANNED** | `RemoteCatalogSource` is a documented no-op placeholder |

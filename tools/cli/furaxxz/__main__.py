@@ -13,6 +13,12 @@
     furaxxz backup create <file> [<file> ...] --to <dir>
     furaxxz backup restore <dir> --to <dir>
     furaxxz security inspect
+    furaxxz lab init <source_dir> --session <name>
+    furaxxz lab apply <session> --replace <rel_path> <file>
+    furaxxz lab apply <session> --add <rel_path> <file>
+    furaxxz lab apply <session> --remove <rel_path>
+    furaxxz lab build <session>
+    furaxxz lab verify <session>
     furaxxz validate
     furaxxz clean
 """
@@ -29,6 +35,7 @@ from . import __version__, environment
 from . import backup as backup_mod
 from . import firmware as firmware_mod
 from . import fonts as fonts_mod
+from . import lab as lab_mod
 from . import pack as pack_mod
 from . import security as security_mod
 from . import theme as theme_mod
@@ -231,6 +238,83 @@ def cmd_security_inspect(args) -> int:
     return 0
 
 
+def cmd_lab_init(args) -> int:
+    ctx = security_mod.SecurityContext(operation="lab-modify", dry_run=True)
+    print(ctx.banner())
+    print()
+    try:
+        session = lab_mod.init_session(LAB_DIR, Path(args.source_dir), args.session)
+    except lab_mod.LabError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    manifest_count = len(session.load_operations())
+    print(f"Session '{args.session}' initialized from {args.source_dir}")
+    print(f"  original: {session.original_tree}")
+    print(f"  modified: {session.modified_tree} (working copy, {manifest_count} operations so far)")
+    return 0
+
+
+def cmd_lab_apply(args) -> int:
+    op_types = [t for t in ("replace", "add", "remove") if getattr(args, t)]
+    if len(op_types) != 1:
+        print("error: specify exactly one of --replace, --add, --remove", file=sys.stderr)
+        return 1
+    op_type = op_types[0]
+    if op_type == "remove":
+        rel_path = args.remove
+        source_file = None
+    else:
+        rel_path, source = getattr(args, op_type)
+        source_file = Path(source)
+
+    ctx = security_mod.SecurityContext(operation="lab-modify", dry_run=True)
+    print(ctx.banner())
+    print()
+
+    session = lab_mod.LabSession(session_id=args.session, lab_root=LAB_DIR)
+    try:
+        result = lab_mod.apply_operation(session, op_type, rel_path, source_file)
+    except lab_mod.LabError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"Applied {op_type} on '{rel_path}'")
+    print(f"  sha256 before: {result.sha256_before}")
+    print(f"  sha256 after:  {result.sha256_after}")
+    return 0
+
+
+def cmd_lab_build(args) -> int:
+    ctx = security_mod.SecurityContext(operation="lab-modify", dry_run=True)
+    print(ctx.banner())
+    print()
+
+    session = lab_mod.LabSession(session_id=args.session, lab_root=LAB_DIR)
+    try:
+        report = lab_mod.build_session(session)
+    except lab_mod.LabError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    _print_json(report)
+    return 0
+
+
+def cmd_lab_verify(args) -> int:
+    session = lab_mod.LabSession(session_id=args.session, lab_root=LAB_DIR)
+    try:
+        result = lab_mod.verify_session(session, LAB_DIR / "reports" / args.session)
+    except lab_mod.LabError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    print(f"Original intact: {result.original_intact}")
+    if result.original_mismatches:
+        print(f"  mismatches: {result.original_mismatches}")
+    print(f"Reproducible:    {result.reproducible}")
+    if result.reproduction_mismatches:
+        print(f"  mismatches: {result.reproduction_mismatches}")
+    print("VERIFY PASSED" if result.ok else "VERIFY FAILED")
+    return 0 if result.ok else 1
+
+
 def cmd_validate(args) -> int:
     problems = []
     for theme_path in CATALOG_THEMES.glob("*/theme.json"):
@@ -356,6 +440,25 @@ def build_parser() -> argparse.ArgumentParser:
     security_sub = security.add_subparsers(dest="security_command", required=True)
     p = security_sub.add_parser("inspect", help="Inspect device security posture")
     p.set_defaults(func=cmd_security_inspect)
+
+    lab = sub.add_parser("lab", help="Offline system modification lab (never flashable)")
+    lab_sub = lab.add_subparsers(dest="lab_command", required=True)
+    p = lab_sub.add_parser("init", help="Snapshot a source tree into a new lab session")
+    p.add_argument("source_dir")
+    p.add_argument("--session", required=True)
+    p.set_defaults(func=cmd_lab_init)
+    p = lab_sub.add_parser("apply", help="Apply a recorded file operation to a session")
+    p.add_argument("session")
+    p.add_argument("--replace", nargs=2, metavar=("REL_PATH", "FILE"))
+    p.add_argument("--add", nargs=2, metavar=("REL_PATH", "FILE"))
+    p.add_argument("--remove", metavar="REL_PATH")
+    p.set_defaults(func=cmd_lab_apply)
+    p = lab_sub.add_parser("build", help="Package a session's modified tree (never flashable)")
+    p.add_argument("session")
+    p.set_defaults(func=cmd_lab_build)
+    p = lab_sub.add_parser("verify", help="Verify a session is intact and reproducible")
+    p.add_argument("session")
+    p.set_defaults(func=cmd_lab_verify)
 
     p = sub.add_parser("validate", help="Validate the local catalog")
 

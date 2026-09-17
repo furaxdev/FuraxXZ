@@ -25,6 +25,7 @@ schema (JSON manifests for themes/packs, sfnt fonts, image assets):
 | `theme.py` / `pack.py` | Manifest schema, creation, validation |
 | `hashing.py` | SHA-256, checksums.sha256, manifests |
 | `backup.py` | Hashed backup create/restore with corruption detection |
+| `lab.py` | Offline system modification lab: session snapshot, recorded file operations (replace/add/remove), reproducibility+tamper verification, ZIP packaging — every write confined to `lab/`, output never claimed flashable |
 | `environment.py` | `doctor` — real, non-assumed environment checks |
 | `__main__.py` | argparse-based CLI wiring all of the above |
 
@@ -68,4 +69,27 @@ furaxxz fonts inject <image> <font>   (security-gated, dry-run by default)
      │  1) validate  2) compatibility  3) space  4) hash  5) backup  6) modify (lab/ only)
      ▼
 report: what was actually done, or why it was BLOCKED
+```
+
+## Data flow (offline lab session — Phase 8)
+
+```
+source tree (e.g. furaxxz firmware extract output, or any directory)
+     │
+     ▼
+furaxxz lab init <source_dir> --session s1
+     │  copy → lab/original/s1/tree/ (hashed, immutable)
+     │  copy → lab/modified/s1/tree/ (working copy) + operations.json = []
+     ▼
+furaxxz lab apply s1 --replace <rel_path> <file>   (repeatable; each call appends to operations.json)
+     │  modifies lab/modified/s1/tree/ only; rejects path traversal
+     ▼
+furaxxz lab verify s1
+     │  1) re-hash lab/original/s1/tree/ against its init-time checksums (tamper check)
+     │  2) replay operations.json onto a FRESH copy of the original, diff vs lab/modified/s1/tree/
+     ▼
+furaxxz lab build s1   (only meaningful once verify passes)
+     │  package lab/modified/s1/tree/ → lab/rebuilt/s1/s1.zip
+     ▼
+lab/reports/s1/report.json   {"status": "EXPERIMENTAL", "flashable": false, ...}
 ```
