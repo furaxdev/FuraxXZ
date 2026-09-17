@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FuraxXZ</string>
+    <string name="tagline">FuraxXZ — Personalize your Xperia.</string>
+
+    <string name="category_fonts">Fonts</string>
+    <string name="category_wallpapers">Wallpapers</string>
+    <string name="category_themes">Themes</string>
+    <string name="category_icons">Icons</string>
+    <string name="category_sounds">Sounds</string>
+    <string name="category_animations">Animations</string>
+    <string name="category_packs">Packs</string>
+
+    <string name="empty_catalog">Nothing here yet. The local catalog is empty for this category.</string>
+</resources>

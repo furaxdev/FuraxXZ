@@ -1,0 +1,42 @@
+# Android / Gradle
+apps/furaxxz/**/build/
+apps/furaxxz/.gradle/
+apps/furaxxz/local.properties
+apps/furaxxz/*.apk
+apps/furaxxz/captures/
+*.iml
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/
+
+# Node (reserved for future tooling)
+node_modules/
+
+# OS
+.DS_Store
+
+# FuraxXZ working directories — real firmware/backups/extractions are
+# session-local and must never be committed.
+firmware/input/*
+!firmware/input/.gitkeep
+firmware/extracted/*
+!firmware/extracted/.gitkeep
+firmware/modified/*
+!firmware/modified/.gitkeep
+firmware/output/*
+!firmware/output/.gitkeep
+lab/original/*
+!lab/original/.gitkeep
+lab/extracted/*
+!lab/extracted/.gitkeep
+lab/modified/*
+!lab/modified/.gitkeep
+lab/rebuilt/*
+!lab/rebuilt/.gitkeep
+reports/history/*
+!reports/history/.gitkeep

@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""Wrapper so `./scripts/furaxxz <command>` works without installing the
+package (adds tools/cli to sys.path)."""
+import os
+import sys
+
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO_ROOT, "tools", "cli"))
+
+from furaxxz.__main__ import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "furaxxz"
+version = "0.1.0"
+description = "FuraxXZ toolkit — personalization and firmware analysis lab for the Sony Xperia XZ (F8331)"
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+
+[project.scripts]
+furaxxz = "furaxxz.__main__:main"
+
+[tool.setuptools]
+package-dir = { "" = "tools/cli" }
+
+[tool.setuptools.packages.find]
+where = ["tools/cli"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["tools/cli"]

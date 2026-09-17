@@ -1,0 +1,12 @@
+target-version = "py310"
+line-length = 100
+
+[lint]
+select = ["E", "F", "I", "UP", "SIM", "RUF", "PL"]
+ignore = ["PLR0913", "PLR0912", "PLR0915", "PLR2004"]
+
+[lint.per-file-ignores]
+# Test fixtures build raw sfnt binaries and exercise the CLI as a
+# subprocess; the extra positional args / long literal lines / local
+# imports there are appropriate, not a code smell.
+"tests/*" = ["E501", "PLC0415", "PLR0917", "PLW2901"]
