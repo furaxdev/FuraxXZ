@@ -24,17 +24,18 @@ jobs:
           pip install pytest ruff
 
       - name: Lint (ruff)
-        run: ruff check tools/cli tests
+        run: ruff check tools/cli tests scripts
 
       - name: Unit + integration + CLI tests
         run: python -m pytest -v
 
-      - name: furaxxz doctor (informational)
-        run: python -m pytest tests/test_cli.py::test_cli_doctor_runs -q
-        continue-on-error: true
+      - name: furaxxz doctor (informational — CI has no Android SDK by default)
+        run: python -m furaxxz doctor || true
+        env:
+          PYTHONPATH: tools/cli
 
       - name: furaxxz validate (catalog)
-        run: python -m tools.cli.furaxxz validate || true
+        run: python -m furaxxz validate
         env:
           PYTHONPATH: tools/cli
 
@@ -57,7 +58,7 @@ jobs:
         run: chmod +x apps/furaxxz/gradlew
         continue-on-error: true
 
-      - name: Assemble debug APK
+      - name: Assemble debug APK and run JVM unit tests
         working-directory: apps/furaxxz
         run: |
-          if [ -f gradlew ]; then ./gradlew assembleDebug --no-daemon; else gradle assembleDebug --no-daemon; fi
+          if [ -f gradlew ]; then ./gradlew assembleDebug testDebugUnitTest --no-daemon; else gradle assembleDebug testDebugUnitTest --no-daemon; fi

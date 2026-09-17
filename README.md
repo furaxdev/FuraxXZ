@@ -91,11 +91,12 @@ docs/               Architecture, firmware, bootloader, flashing, security, cata
 - [docs/CATALOG.md](docs/CATALOG.md)
 - [docs/SECURITY.md](docs/SECURITY.md)
 - [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)
+- [docs/VALIDATION.md](docs/VALIDATION.md)
 
 ## Testing
 
 ```bash
-python3 -m pytest -v          # CLI: 74 tests — fonts, firmware, hashing, backup, theme/pack, lab, CLI, security
+python3 -m pytest -v          # CLI: 80 tests — fonts, firmware, hashing, backup, theme/pack, lab, cross-runtime, CLI, security
 cd apps/furaxxz && ./gradlew testDebugUnitTest   # Android: 34 JVM unit tests — model, JSON parser, theme/pack manifests
 ```
 
