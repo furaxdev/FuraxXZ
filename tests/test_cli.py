@@ -28,6 +28,13 @@ def test_cli_device_profile():
     assert data["bootloaderUnlockAllowed"] is False
 
 
+def test_cli_device_readiness_is_blocked():
+    result = run_cli("device", "readiness")
+    assert result.returncode == 1
+    assert "BLOCKED" in result.stdout
+    assert "Overall device-integration readiness: BLOCKED" in result.stdout
+
+
 def test_cli_security_inspect():
     result = run_cli("security", "inspect")
     assert result.returncode == 0

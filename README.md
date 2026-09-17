@@ -24,6 +24,8 @@ the existing Sony firmware rather than a full AOSP/LineageOS rebuild.
 | Sony SIN/FTF proprietary format support | **PLANNED** |
 | Actual partition repacking (font injection into a live image) | **BLOCKED** (see `docs/MODIFICATIONS.md`) |
 | Bootloader unlock / signature bypass | **UNSUPPORTED**, will never be built |
+| Device integration readiness checklist (`furaxxz device readiness`) | **IMPLEMENTED** — never probes for a device, never reports ready |
+| Real device integration (flashing, ADB/fastboot device operations) | **BLOCKED** — no physical device, no real firmware dump, bootloader unlock disallowed (see `docs/DEVICE_INTEGRATION.md`) |
 
 See [docs/MODIFICATIONS.md](docs/MODIFICATIONS.md) for the full,
 feature-by-feature status table.
@@ -43,6 +45,9 @@ python3 -m pip install pytest   # for running tests; the CLI itself needs no dep
 ./scripts/furaxxz lab apply demo --replace system/fonts/Roboto.ttf path/to/new-font.ttf
 ./scripts/furaxxz lab verify demo
 ./scripts/furaxxz lab build demo
+
+# Device integration readiness (always BLOCKED for this device today — see docs/DEVICE_INTEGRATION.md)
+./scripts/furaxxz device readiness
 ```
 
 Or install it properly:
@@ -92,11 +97,12 @@ docs/               Architecture, firmware, bootloader, flashing, security, cata
 - [docs/SECURITY.md](docs/SECURITY.md)
 - [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)
 - [docs/VALIDATION.md](docs/VALIDATION.md)
+- [docs/DEVICE_INTEGRATION.md](docs/DEVICE_INTEGRATION.md)
 
 ## Testing
 
 ```bash
-python3 -m pytest -v          # CLI: 80 tests — fonts, firmware, hashing, backup, theme/pack, lab, cross-runtime, CLI, security
+python3 -m pytest -v          # CLI: 88 tests — fonts, firmware, hashing, backup, theme/pack, lab, readiness, cross-runtime, CLI, security
 cd apps/furaxxz && ./gradlew testDebugUnitTest   # Android: 34 JVM unit tests — model, JSON parser, theme/pack manifests
 ```
 

@@ -29,6 +29,17 @@ presented as more finished than this table says.
 | Android: system-wide theme/icon/sound application (touching `/system` or launcher-level theming) | **PLANNED/UNSUPPORTED** | Out of reach without root on a locked-bootloader F8331; FuraxXZ only ever recolors its own in-app views — see `docs/BOOTLOADER.md` |
 | Bootloader unlock, any form | **UNSUPPORTED** | Will never be implemented — see `docs/BOOTLOADER.md` |
 | Remote/hosted catalog | **PLANNED** | `RemoteCatalogSource` is a documented no-op placeholder |
+| Device integration readiness checklist (`furaxxz device readiness`) | **IMPLEMENTED** | `tools/cli/furaxxz/readiness.py`, tested in `tests/test_readiness.py`; never probes for a device, never reports overall `OK` |
+| Real device integration (flashing, partition read/write, ADB/fastboot device operations) | **BLOCKED** | No physical F8331, no real firmware dump, bootloader unlock disallowed — see `docs/DEVICE_INTEGRATION.md` |
+
+## Cross-runtime schema consistency
+
+The CLI's theme/pack schema and the Android app's independent
+implementation of the same schema are guarded against drift by
+`tests/test_cross_runtime_consistency.py` (6 tests) — every bundled
+Android demo manifest is validated against the CLI's own validator, and
+the `HEX_COLOR` regex is compared byte-for-byte between
+`tools/cli/furaxxz/theme.py` and `ThemeManifestParser.kt`.
 
 ## Rule
 

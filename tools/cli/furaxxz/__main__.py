@@ -19,6 +19,7 @@
     furaxxz lab apply <session> --remove <rel_path>
     furaxxz lab build <session>
     furaxxz lab verify <session>
+    furaxxz device readiness
     furaxxz validate
     furaxxz clean
 """
@@ -37,6 +38,7 @@ from . import firmware as firmware_mod
 from . import fonts as fonts_mod
 from . import lab as lab_mod
 from . import pack as pack_mod
+from . import readiness as readiness_mod
 from . import security as security_mod
 from . import theme as theme_mod
 from .device import TARGET_DEVICE
@@ -72,6 +74,22 @@ def cmd_doctor(args) -> int:
 def cmd_device_profile(args) -> int:
     _print_json(TARGET_DEVICE.as_dict())
     return 0
+
+
+def cmd_device_readiness(args) -> int:
+    items = readiness_mod.compute_readiness()
+    for item in items:
+        print(f"[{item.status:<7}] {item.id}: {item.description}")
+        print(f"           {item.detail}")
+    overall = readiness_mod.overall_status(items)
+    print(f"\nOverall device-integration readiness: {overall}")
+    if overall != "OK":
+        print(
+            "Device integration (Phase 10) remains BLOCKED — see "
+            "docs/DEVICE_INTEGRATION.md. Nothing in this tool will attempt to "
+            "flash, unlock, or otherwise modify a real device."
+        )
+    return 0 if overall == "OK" else 1
 
 
 def cmd_firmware_analyze(args) -> int:
@@ -378,6 +396,8 @@ def build_parser() -> argparse.ArgumentParser:
     device_sub = device.add_subparsers(dest="device_command", required=True)
     p = device_sub.add_parser("profile", help="Print the target device profile")
     p.set_defaults(func=cmd_device_profile)
+    p = device_sub.add_parser("readiness", help="Device integration readiness checklist (Phase 10)")
+    p.set_defaults(func=cmd_device_readiness)
 
     fw = sub.add_parser("firmware", help="Firmware analysis/extraction")
     fw_sub = fw.add_subparsers(dest="firmware_command", required=True)

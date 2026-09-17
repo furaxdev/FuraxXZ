@@ -1,11 +1,11 @@
 # FuraxXZ Watchdog Report
 
-Generated: 2026-09-17T15:27:41.266302+00:00
+Generated: 2026-09-17T15:30:06.111188+00:00
 
 ## Git
 - Branch: `claude/furaxxz-complete-project-xoplvx`
 - Working tree: DIRTY (uncommitted changes)
-- Last commit: d2e6ded Phase 8: offline system modification lab (furaxxz lab)
+- Last commit: 67f48e5 Phase 9: full validation audit — fixed a silently-broken CI check
 
 ## Environment
 - Status: MISSING PIECES (see docs/ENVIRONMENT.md)
@@ -26,7 +26,7 @@ Generated: 2026-09-17T15:27:41.266302+00:00
 
 ## Tests
 - Result: PASS
-- Summary: 80 passed in 1.69s
+- Summary: 88 passed in 1.67s
 
 ## Disk
 - Free: 28.0 GiB

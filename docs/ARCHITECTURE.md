@@ -26,6 +26,7 @@ schema (JSON manifests for themes/packs, sfnt fonts, image assets):
 | `hashing.py` | SHA-256, checksums.sha256, manifests |
 | `backup.py` | Hashed backup create/restore with corruption detection |
 | `lab.py` | Offline system modification lab: session snapshot, recorded file operations (replace/add/remove), reproducibility+tamper verification, ZIP packaging — every write confined to `lab/`, output never claimed flashable |
+| `readiness.py` | Phase 10 device-integration readiness checklist — never probes for a device, never defaults to ready; see `docs/DEVICE_INTEGRATION.md` |
 | `environment.py` | `doctor` — real, non-assumed environment checks |
 | `__main__.py` | argparse-based CLI wiring all of the above |
 
