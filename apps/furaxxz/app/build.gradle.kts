@@ -37,6 +37,17 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    // Default Gradle naming is "<module>-<buildType>.apk" — always
+    // "app-debug.apk" since the module is named "app". Rename the actual
+    // output file so sideloading isn't a pile of identically-named files.
+    applicationVariants.all {
+        val variant = this
+        outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            output.outputFileName = "FuraxXZ-${variant.versionName}-${variant.buildType.name}.apk"
+        }
+    }
 }
 
 dependencies {
