@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": "furax-demo-icons",
+    "name": "Furax Demo Icons",
+    "author": "FuraxXZ",
+    "license": "MIT",
+    "file": "pack.json"
+  }
+]

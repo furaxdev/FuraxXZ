@@ -61,6 +61,24 @@ At least one component is required (`pack.py::validate_pack`, mirrored by
 [{ "id": "inter-regular", "name": "Inter", "author": "Google Fonts", "license": "OFL-1.1", "file": "Inter-Regular.ttf" }]
 ```
 
+### Icon pack (`assets/catalog/icons/pack.json`, Android only)
+
+```json
+{
+  "name": "Furax Demo Icons",
+  "overrides": { "com.android.settings": "ic_override_gear" }
+}
+```
+
+Only consumed by FuraxXZ's own launcher (`docs/MODIFICATIONS.md`) — it
+has no CLI/`catalog/` equivalent, since it only means anything inside a
+launcher's own app drawer. Each key is a package name, each value a
+drawable resource name bundled in the app itself (never a third-party
+app's actual icon/logo — see Licensing below). Parsed and validated by
+`launcher/IconPackParser.kt`, same pure-Kotlin approach as the theme/pack
+parsers. A package not listed keeps its own real icon; nothing is ever
+silently blanked.
+
 ### Theme/Pack entry (Android manifest, `assets/catalog/themes|packs/manifest.json`)
 
 Same `{id, name, author, license, file}` shape as fonts; `file` points to
@@ -78,7 +96,11 @@ shows what it declares, then what was actually applied vs. skipped
 Do not bundle or auto-embed wallpapers/fonts without a license that
 permits redistribution. The catalog ships empty (`[]` manifests) in this
 repo; populating it with real assets is a separate, license-checked step
-— not automated here.
+— not automated here. The same rule applies to icon packs: never bundle
+a real third-party app's actual icon/logo. The demo icon pack
+(`assets/catalog/icons/pack.json`) only overrides a *system* package
+(`com.android.settings`) with a gear icon FuraxXZ draws itself — package
+names aren't trademarked, logos are, and this demo uses neither.
 
 ## Validating the catalog
 

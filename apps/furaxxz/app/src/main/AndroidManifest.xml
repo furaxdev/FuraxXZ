@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Required (API 30+ package visibility) to enumerate other
+         launchable apps for the home-screen app drawer. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -22,6 +31,22 @@
             android:name=".ui.CategoryActivity"
             android:exported="false"
             android:parentActivityName=".ui.MainActivity" />
+
+        <!-- FuraxXZ's own home screen. A separate, real launcher activity
+             (ACTION_MAIN + CATEGORY_HOME) — selectable from Android's normal
+             "choose a home app" picker. No root, no special permission. -->
+        <activity
+            android:name=".launcher.LauncherActivity"
+            android:exported="true"
+            android:theme="@style/Theme.FuraxXZ.Launcher"
+            android:launchMode="singleTask"
+            android:stateNotNeeded="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
     </application>
 

@@ -26,11 +26,16 @@ presented as more finished than this table says.
 | Offline lab: packaging (`lab build`) | **IMPLEMENTED — output explicitly EXPERIMENTAL, never flashable** | `lab.py::build_session` writes a plain ZIP + `report.json` with `"flashable": false` hardcoded — it is not a partition image and not signed |
 | Sony SIN/FTF proprietary format parsing | **PLANNED** | not started — see `docs/FIRMWARE.md` |
 | Font injection into a real partition image (repack) | **BLOCKED** | `furaxxz fonts inject --execute` explicitly stops and reports BLOCKED — see `docs/FLASHING.md`. The Phase 8 lab does not change this: it operates on already-extracted directory trees, never on a raw partition image |
-| Android: system-wide theme/icon/sound application (touching `/system` or launcher-level theming) | **PLANNED/UNSUPPORTED** | Out of reach without root on a locked-bootloader F8331; FuraxXZ only ever recolors its own in-app views — see `docs/BOOTLOADER.md` |
+| Android: system-wide font replacement (affecting other apps' rendering) | **BLOCKED** | Requires `/system` write access (root); out of reach without a bootloader unlock this unit doesn't have — see `docs/BOOTLOADER.md` |
 | Bootloader unlock, any form | **UNSUPPORTED** | Will never be implemented — see `docs/BOOTLOADER.md` |
 | Remote/hosted catalog | **PLANNED** | `RemoteCatalogSource` is a documented no-op placeholder |
 | Device integration readiness checklist (`furaxxz device readiness`) | **IMPLEMENTED** | `tools/cli/furaxxz/readiness.py`, tested in `tests/test_readiness.py`; never probes for a device, never reports overall `OK` |
 | Real device integration (flashing, partition read/write, ADB/fastboot device operations) | **BLOCKED** | No physical F8331, no real firmware dump, bootloader unlock disallowed — see `docs/DEVICE_INTEGRATION.md` |
+| Android: home-screen launcher (real `HOME`/`DEFAULT` activity, selectable in Android's launcher picker) | **IMPLEMENTED** | `apps/furaxxz` `launcher/LauncherActivity`; no root, no special permission beyond standard `<queries>` package-visibility declaration |
+| Android: real app drawer (lists every installed launchable app via `PackageManager`, launches them) | **IMPLEMENTED** | `launcher/InstalledAppsRepository`; queries `ACTION_MAIN`/`CATEGORY_LAUNCHER`, sorted, real launch intents |
+| Android: real system wallpaper shown behind the launcher | **IMPLEMENTED** | `Theme.FuraxXZ.Launcher` (`android:windowShowWallpaper`) — the actual wallpaper `WallpaperManager` sets, not a copy |
+| Android: per-app icon override within FuraxXZ's own launcher | **IMPLEMENTED** | `launcher/IconPackParser` + `IconPackResolver` (pure Kotlin, tested in `IconPackParserTest`/`IconPackResolverTest`) + `InstalledAppsRepository`; demo pack overrides only `com.android.settings` with a FuraxXZ-drawn icon (no third-party logos bundled, for the same licensing reason as `docs/CATALOG.md`); every non-overridden app keeps rendering its real icon |
+| Android: overriding icons *outside* FuraxXZ's own launcher (e.g. inside Sony's stock Xperia Home) | **UNSUPPORTED** | No Android API lets one app change another launcher's icons; this is not a missing feature, it's not how the platform works |
 
 ## Cross-runtime schema consistency
 

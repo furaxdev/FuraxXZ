@@ -8,4 +8,12 @@
         <item name="colorSurface">@color/furax_surface</item>
         <item name="colorOnSurface">@color/furax_on_background</item>
     </style>
+
+    <!-- Used only by LauncherActivity: shows the real system wallpaper
+         behind the home screen (android:windowShowWallpaper), instead of
+         a flat background color. -->
+    <style name="Theme.FuraxXZ.Launcher" parent="Theme.FuraxXZ">
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
+    </style>
 </resources>

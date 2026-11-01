@@ -46,6 +46,9 @@ schema (JSON manifests for themes/packs, sfnt fonts, image assets):
 | `engine/pack/PackManager` | Loads a pack from `assets/catalog/packs/`, applies `font`/`wallpaper`/`colors` by delegating to `ThemeManager` (no duplicated logic); reports `icons`/`sounds`/`bootAnimation` as explicitly skipped |
 | `engine/PersonalizationEngine` | Orchestrator wiring `catalog`, `fonts`, `wallpapers`, `themes`, `packs`; Icon/Sound/Animation managers remain absent, not stubbed |
 | `ui/` | `MainActivity` (category grid) → `CategoryActivity` (catalog list; tapping a Theme/Pack item shows a confirmation dialog, then applies it and reports exactly what was applied vs. skipped) |
+| `launcher/IconPackManifest` + `IconPackParser` + `IconPackResolver` | Icon-pack schema (`{"name", "overrides": {packageName: drawableName}}`), pure Kotlin like the theme/pack parsers, unit-tested |
+| `launcher/InstalledAppsRepository` | Real `PackageManager` query for every launchable app; resolves each icon through the bundled icon pack, falling back to the app's own real icon when not overridden |
+| `launcher/LauncherActivity` | FuraxXZ's own home screen — a real `HOME`/`DEFAULT` activity selectable from Android's launcher picker, no root. Shows the real system wallpaper behind the app drawer via `Theme.FuraxXZ.Launcher` |
 
 ## Why not one shared engine yet
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48"
+    android:tint="@color/furax_accent">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,30 A6,6 0 1 0 24,18 A6,6 0 1 0 24,30 Z
+                           M24,6 L27,6 L28,11 L32,13 L37,10 L40,13 L37,18 L39,22 L44,23 L44,27 L39,28 L37,32 L40,37 L37,40 L32,37 L28,39 L27,44 L24,44 L23,39 L19,37 L14,40 L11,37 L14,32 L12,28 L7,27 L7,23 L12,22 L14,18 L11,13 L14,10 L19,13 L23,11 Z" />
+</vector>

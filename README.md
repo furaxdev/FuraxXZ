@@ -26,6 +26,8 @@ the existing Sony firmware rather than a full AOSP/LineageOS rebuild.
 | Bootloader unlock / signature bypass | **UNSUPPORTED**, will never be built |
 | Device integration readiness checklist (`furaxxz device readiness`) | **IMPLEMENTED** — never probes for a device, never reports ready |
 | Real device integration (flashing, ADB/fastboot device operations) | **BLOCKED** — no physical device, no real firmware dump, bootloader unlock disallowed (see `docs/DEVICE_INTEGRATION.md`) |
+| Android: own home-screen launcher + real app drawer + per-app icon override | **IMPLEMENTED** — a real, root-free workaround for system-wide icon theming: since no app can reach into Sony's stock launcher, FuraxXZ ships its own (see `docs/MODIFICATIONS.md`) |
+| System-wide font replacement (any app, not just FuraxXZ) | **BLOCKED** — requires `/system` write access (root), which requires an unlocked bootloader this device doesn't have |
 
 See [docs/MODIFICATIONS.md](docs/MODIFICATIONS.md) for the full,
 feature-by-feature status table.
@@ -69,6 +71,12 @@ build-tools 34.0.0 installed (`sdkmanager "platforms;android-34"
 "build-tools;34.0.0"`). Min SDK 26 (Android 8.0), matching the target
 device.
 
+After installing the APK, press the device's Home button — Android
+offers a launcher picker; choose "FuraxXZ" (and "Always", if you want it
+as the default home screen). No root required — see
+`docs/MODIFICATIONS.md` for exactly what this launcher can and can't
+customize compared to Sony's stock one.
+
 ## Repository layout
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full module map.
@@ -103,7 +111,7 @@ docs/               Architecture, firmware, bootloader, flashing, security, cata
 
 ```bash
 python3 -m pytest -v          # CLI: 88 tests — fonts, firmware, hashing, backup, theme/pack, lab, readiness, cross-runtime, CLI, security
-cd apps/furaxxz && ./gradlew testDebugUnitTest   # Android: 34 JVM unit tests — model, JSON parser, theme/pack manifests
+cd apps/furaxxz && ./gradlew testDebugUnitTest   # Android: 43 JVM unit tests — model, JSON parser, theme/pack manifests, icon pack
 ```
 
 No test modifies a real firmware image or touches a real device; all

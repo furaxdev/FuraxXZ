@@ -1,0 +1,6 @@
+{
+  "name": "Furax Demo Icons",
+  "overrides": {
+    "com.android.settings": "ic_override_gear"
+  }
+}
